@@ -111,7 +111,7 @@ func (m *UserInfo) GetSalt() string {
 }
 
 // TrelloInfo comes from trello, this information is used by
-// ambition-rello
+// [`ambition-rello`](https://github.com/adamryman/ambition-rello)
 type TrelloInfo struct {
 	ID         string `protobuf:"bytes,1,opt,name=ID" json:"ID,omitempty"`
 	AvatarHas  string `protobuf:"bytes,2,opt,name=AvatarHas" json:"AvatarHas,omitempty"`

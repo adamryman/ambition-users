@@ -113,7 +113,7 @@ th:nth-child(4) {
 #### TrelloInfo
 
 TrelloInfo comes from trello, this information is used by
- ambition-rello
+ [`ambition-rello`](https://github.com/adamryman/ambition-rello)
 
 | Name | Type | Field Number | Description|
 | ---- | ---- | ------------ | -----------|
