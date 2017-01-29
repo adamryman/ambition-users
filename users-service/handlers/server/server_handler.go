@@ -4,6 +4,8 @@ import (
 	"golang.org/x/net/context"
 	"os"
 
+	"github.com/pkg/errors"
+
 	sqlite "github.com/adamryman/ambition-users/sqlite"
 	pb "github.com/adamryman/ambition-users/users-service"
 )
