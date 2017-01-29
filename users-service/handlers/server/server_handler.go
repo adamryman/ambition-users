@@ -2,19 +2,17 @@ package handler
 
 import (
 	"golang.org/x/net/context"
-	"os"
 
+	"github.com/adamryman/dbconn"
 	"github.com/pkg/errors"
 
-	sqlite "github.com/adamryman/ambition-users/sqlite"
+	"github.com/adamryman/ambition-users/mysql"
 	pb "github.com/adamryman/ambition-users/users-service"
 )
 
 // NewService returns a naïve, stateless implementation of Service.
 func NewService() pb.UsersServer {
-	dbLocation := os.Getenv("SQLITE")
-
-	database, err := sqlite.InitDatabase(dbLocation)
+	database, err := mysql.InitDatabase(dbconn.FromENV().MySQL())
 	if err != nil {
 		panic(err)
 	}

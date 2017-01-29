@@ -1,9 +1,9 @@
-package sqlite
+package mysql
 
 import (
 	"database/sql"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
 
 	pb "github.com/adamryman/ambition-users/users-service"
@@ -14,7 +14,7 @@ type database struct {
 }
 
 func InitDatabase(conn string) (pb.Database, error) {
-	d, err := sql.Open("sqlite3", conn)
+	d, err := sql.Open("mysql", conn)
 	if err != nil {
 		return nil, errors.Wrapf(err, "cannot connect to %s", conn)
 	}
