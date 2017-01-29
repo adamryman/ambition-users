@@ -136,8 +136,7 @@ Users stores user information. It assumes all requests are authenticated.
  It returns that User with it's ID populated |
 | ReadUser | User | User | ReadUser takes some information about a user and tries to find the
  user with that information
- Accepted values: ID, Info.Username, Info.email, Trello.Id, and
- Trello.Username |
+ Accepted values: ID, Info.Username, Info.email, and Trello.ID |
 | UpdateUser | User | User | UpdateUser requires an ID, which can be obttained from ReadUser.
  All other non-zerp values will be updated |
 | DeleteUser | User | User | DeleteUser requires an ID, as a Read before a delete is a good idea.

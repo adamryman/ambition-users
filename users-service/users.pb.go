@@ -190,8 +190,7 @@ type UsersClient interface {
 	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	// ReadUser takes some information about a user and tries to find the
 	// user with that information
-	// Accepted values: ID, Info.Username, Info.email, Trello.Id, and
-	// Trello.Username
+	// Accepted values: ID, Info.Username, Info.email, and Trello.ID
 	ReadUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	// UpdateUser requires an ID, which can be obttained from ReadUser.
 	// All other non-zerp values will be updated
@@ -253,8 +252,7 @@ type UsersServer interface {
 	CreateUser(context.Context, *User) (*User, error)
 	// ReadUser takes some information about a user and tries to find the
 	// user with that information
-	// Accepted values: ID, Info.Username, Info.email, Trello.Id, and
-	// Trello.Username
+	// Accepted values: ID, Info.Username, Info.email, and Trello.ID
 	ReadUser(context.Context, *User) (*User, error)
 	// UpdateUser requires an ID, which can be obttained from ReadUser.
 	// All other non-zerp values will be updated
