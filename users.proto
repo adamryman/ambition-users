@@ -12,8 +12,7 @@ service Users {
 
   // ReadUser takes some information about a user and tries to find the
   // user with that information
-  // Accepted values: ID, Info.Username, Info.email, Trello.Id, and
-  // Trello.Username
+  // Accepted values: ID, Info.Username, Info.email, and Trello.ID
   rpc ReadUser(User) returns (User) {}
 
   // UpdateUser requires an ID, which can be obttained from ReadUser.
