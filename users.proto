@@ -40,7 +40,7 @@ message UserInfo {
 }
 
 // TrelloInfo comes from trello, this information is used by
-// ambition-rello
+// [`ambition-rello`](https://github.com/adamryman/ambition-rello)
 message TrelloInfo {
   string ID = 1;
   string AvatarHas = 2;
