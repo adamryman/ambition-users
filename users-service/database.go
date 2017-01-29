@@ -6,6 +6,6 @@ type Database interface {
 	CreateUser(in *User) (*User, error)
 
 	ReadUserByID(id int64) (*User, error)
-	ReadUserByTrelloID(trelloID int64) (*User, error)
+	ReadUserByTrelloID(trelloID string) (*User, error)
 	// TODO: Non-MVP
 }

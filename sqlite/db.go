@@ -51,7 +51,7 @@ func (d *database) ReadUserByID(id int64) (*pb.User, error) {
 }
 
 // TODO:
-func (d *database) ReadUserByTrelloID(trelloID int64) (*pb.User, error) {
+func (d *database) ReadUserByTrelloID(trelloID string) (*pb.User, error) {
 	const query = `SELECT from //TODO where trello_id=?`
 	resp := d.db.QueryRow(query, trelloID)
 	var user pb.User
