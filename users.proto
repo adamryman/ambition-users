@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package users;
+
+import "github.com/TuneLab/go-truss/deftree/googlethirdparty/annotations.proto";
+
+// Users stores user information. It assumes all requests are authenticated.
+service Users {
+  // Create takes information about a user and creates an entry
+  // It returns that User with it's ID populated
+  rpc CreateUser(User) returns (User) {}
+
+  // ReadUser takes some information about a user and tries to find the
+  // user with that information
+  // Accepted values: ID, Info.Username, Info.email, Trello.Id, and
+  // Trello.Username
+  rpc ReadUser(User) returns (User) {}
+
+  // UpdateUser requires an ID, which can be obttained from ReadUser.
+  // All other non-zerp values will be updated
+  rpc UpdateUser(User) returns (User) {}
+
+  // DeleteUser requires an ID, as a Read before a delete is a good idea.
+  // It will return User with just thre requested ID on success
+  rpc DeleteUser(User) returns (User) {}
+}
+
+message User {
+  // ID = 0 for create
+  // Id is immutable
+  int64 ID = 1;
+  UserInfo Info = 2;
+  TrelloInfo Trello = 9;
+}
+
+message UserInfo {
+  string Username = 1;
+  string Email = 2;
+  string Hash = 3;
+  string Salt = 4;
+}
+
+// TrelloInfo comes from trello, this information is used by
+// ambition-rello
+message TrelloInfo {
+  string ID = 1;
+  string AvatarHas = 2;
+  string FullName = 3;
+  string Initials = 4;
+  string Username = 5;
+  string WebhookURL = 6;
+}
+
