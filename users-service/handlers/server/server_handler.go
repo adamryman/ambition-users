@@ -3,7 +3,7 @@ package handler
 import (
 	"golang.org/x/net/context"
 
-	"github.com/adamryman/dbconn"
+	"github.com/adamryman/kit/dbconn"
 	"github.com/pkg/errors"
 
 	"github.com/adamryman/ambition-users/mysql"
