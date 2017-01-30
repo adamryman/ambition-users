@@ -12,8 +12,12 @@ import (
 
 // NewService returns a naïve, stateless implementation of Service.
 func NewService() pb.UsersServer {
-	database, err := mysql.InitDatabase(dbconn.FromENV().MySQL())
+	database, err := mysql.InitDatabase(dbconn.FromENV("MYSQL").MySQL())
 	if err != nil {
+		// TODO: Do not panic, start something to try connection over and over.
+		// Maybe 100 times?
+		// DEBUG_SVC=1 then do like 3.
+		// There will also need to be retry logic for the database methods
 		panic(err)
 	}
 	return usersService{
