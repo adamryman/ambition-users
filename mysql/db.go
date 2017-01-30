@@ -18,6 +18,9 @@ func InitDatabase(conn string) (pb.Database, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "cannot connect to %s", conn)
 	}
+	if err := d.Ping(); err != nil {
+		return nil, err
+	}
 	return &database{d}, nil
 }
 
@@ -25,8 +28,8 @@ func InitDatabase(conn string) (pb.Database, error) {
 func (d *database) CreateUser(in *pb.User) (*pb.User, error) {
 	// TODO: Possibly create userstrello table with trello data and userslocal table for hash, salt, email, etc
 	// TODO: Put in all values rather than just trello values
-	const query = `INSERT `
-	id, err := exec(d.db, query)
+	const query = `INSERT users SET username=?, email=?, trello_id=?, trello_webhookurl=?`
+	id, err := exec(d.db, query, in.Info.Username, in.Info.Email, in.Trello.ID, in.Trello.WebhookURL)
 	if err != nil {
 		return nil, err
 	}
@@ -35,27 +38,27 @@ func (d *database) CreateUser(in *pb.User) (*pb.User, error) {
 	return in, nil
 }
 
-// TODO:
 func (d *database) ReadUserByID(id int64) (*pb.User, error) {
-	const query = `SELECT from users where id=?`
+	const query = `SELECT * FROM users WHERE id=?`
 	resp := d.db.QueryRow(query, id)
 	var user pb.User
-	err := resp.Scan( /* user.TrelloInfo. */ )
+	user.Trello = &pb.TrelloInfo{}
+	user.Info = &pb.UserInfo{}
+	err := resp.Scan(&user.ID, &user.Info.Username, &user.Info.Email, &user.Trello.ID, &user.Trello.WebhookURL)
 	if err != nil {
 		return nil, err
 	}
 
-	// Multi table joins?
-
 	return &user, nil
 }
 
-// TODO:
 func (d *database) ReadUserByTrelloID(trelloID string) (*pb.User, error) {
-	const query = `SELECT from //TODO where trello_id=?`
+	const query = `SELECT * FROM users WHERE trello_id=?`
 	resp := d.db.QueryRow(query, trelloID)
 	var user pb.User
-	err := resp.Scan( /* user.TrelloInfo. */ )
+	user.Trello = &pb.TrelloInfo{}
+	user.Info = &pb.UserInfo{}
+	err := resp.Scan(&user.ID, &user.Info.Username, &user.Info.Email, &user.Trello.ID, &user.Trello.WebhookURL)
 	if err != nil {
 		return nil, err
 	}
