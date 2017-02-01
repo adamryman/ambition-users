@@ -33,13 +33,11 @@ type usersService struct {
 // TODO:
 func (s usersService) CreateUser(ctx context.Context, in *pb.User) (*pb.User, error) {
 	// TODO: input validation
-	var resp pb.User
-	resp = pb.User{
-	// ID:
-	// Info:
-	// Trello:
+	u, err := s.db.CreateUser(in)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot create user")
 	}
-	return &resp, nil
+	return u, nil
 }
 
 // ReadUser implements Service.
