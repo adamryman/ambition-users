@@ -9,11 +9,11 @@ import (
 	pb "github.com/adamryman/ambition-users/users-service"
 )
 
-type database struct {
+type Database struct {
 	db *sql.DB
 }
 
-func InitDatabase(conn string) (pb.Database, error) {
+func InitDatabase(conn string) (*Database, error) {
 	d, err := sql.Open("mysql", conn)
 	if err != nil {
 		return nil, errors.Wrapf(err, "cannot connect to %s", conn)
@@ -21,11 +21,11 @@ func InitDatabase(conn string) (pb.Database, error) {
 	if err := d.Ping(); err != nil {
 		return nil, err
 	}
-	return &database{d}, nil
+	return &Database{d}, nil
 }
 
 // TODO:
-func (d *database) CreateUser(in *pb.User) (*pb.User, error) {
+func (d *Database) CreateUser(in *pb.User) (*pb.User, error) {
 	// TODO: Possibly create userstrello table with trello data and userslocal table for hash, salt, email, etc
 	// TODO: Put in all values rather than just trello values
 	const query = `INSERT users SET username=?, email=?, trello_id=?, trello_webhookurl=?`
@@ -38,7 +38,7 @@ func (d *database) CreateUser(in *pb.User) (*pb.User, error) {
 	return in, nil
 }
 
-func (d *database) ReadUserByID(id int64) (*pb.User, error) {
+func (d *Database) ReadUserByID(id int64) (*pb.User, error) {
 	const query = `SELECT * FROM users WHERE id=?`
 	resp := d.db.QueryRow(query, id)
 	var user pb.User
@@ -52,7 +52,7 @@ func (d *database) ReadUserByID(id int64) (*pb.User, error) {
 	return &user, nil
 }
 
-func (d *database) ReadUserByTrelloID(trelloID string) (*pb.User, error) {
+func (d *Database) ReadUserByTrelloID(trelloID string) (*pb.User, error) {
 	const query = `SELECT * FROM users WHERE trello_id=?`
 	resp := d.db.QueryRow(query, trelloID)
 	var user pb.User

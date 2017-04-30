@@ -1,3 +1,66 @@
+# users
+
+## users.proto
+
+### Messages
+
+<a name="User"></a>
+
+#### User
+
+| Name | Type | Field Number | Description|
+| ---- | ---- | ------------ | -----------|
+| ID | TYPE_INT64 | 1 | ID = 0 for create Id is immutable |
+| Info | [UserInfo](#UserInfo) | 2 |  |
+| Trello | [TrelloInfo](#TrelloInfo) | 9 |  |
+
+<a name="UserInfo"></a>
+
+#### UserInfo
+
+| Name | Type | Field Number | Description|
+| ---- | ---- | ------------ | -----------|
+| Username | TYPE_STRING | 1 |  |
+| Email | TYPE_STRING | 2 |  |
+| Hash | TYPE_STRING | 3 |  |
+| Salt | TYPE_STRING | 4 |  |
+
+<a name="TrelloInfo"></a>
+
+#### TrelloInfo
+
+TrelloInfo comes from trello, this information is used by
+ [`ambition-rello`](https://github.com/adamryman/ambition-rello)
+
+| Name | Type | Field Number | Description|
+| ---- | ---- | ------------ | -----------|
+| ID | TYPE_STRING | 1 |  |
+| AvatarHas | TYPE_STRING | 2 |  |
+| FullName | TYPE_STRING | 3 |  |
+| Initials | TYPE_STRING | 4 |  |
+| Username | TYPE_STRING | 5 |  |
+| WebhookURL | TYPE_STRING | 6 |  |
+
+### Services
+
+#### Users
+
+Users stores user information. It assumes all requests are authenticated.
+
+| Method Name | Request Type | Response Type | Description|
+| ---- | ---- | ------------ | -----------|
+| CreateUser | User | User | Create takes information about a user and creates an entry
+ It returns that User with it's ID populated |
+| ReadUser | User | User | ReadUser takes some information about a user and tries to find the
+ user with that information
+ Accepted values: ID, Info.Username, Info.email, and Trello.ID |
+| UpdateUser | User | User | UpdateUser requires an ID, which can be obttained from ReadUser.
+ All other non-zerp values will be updated |
+| DeleteUser | User | User | DeleteUser requires an ID, as a Read before a delete is a good idea.
+ It will return User with just thre requested ID on success |
+
+#### Users - Http Methods
+
 
 <style type="text/css">
 
@@ -81,66 +144,3 @@ th:nth-child(4) {
 }
 
 </style>
-# users
-
-## users.proto
-
-### Messages
-
-<a name="User"></a>
-
-#### User
-
-| Name | Type | Field Number | Description|
-| ---- | ---- | ------------ | -----------|
-| ID | TYPE_INT64 | 1 | ID = 0 for create Id is immutable |
-| Info | [UserInfo](#UserInfo) | 2 |  |
-| Trello | [TrelloInfo](#TrelloInfo) | 9 |  |
-
-<a name="UserInfo"></a>
-
-#### UserInfo
-
-| Name | Type | Field Number | Description|
-| ---- | ---- | ------------ | -----------|
-| Username | TYPE_STRING | 1 |  |
-| Email | TYPE_STRING | 2 |  |
-| Hash | TYPE_STRING | 3 |  |
-| Salt | TYPE_STRING | 4 |  |
-
-<a name="TrelloInfo"></a>
-
-#### TrelloInfo
-
-TrelloInfo comes from trello, this information is used by
- [`ambition-rello`](https://github.com/adamryman/ambition-rello)
-
-| Name | Type | Field Number | Description|
-| ---- | ---- | ------------ | -----------|
-| ID | TYPE_STRING | 1 |  |
-| AvatarHas | TYPE_STRING | 2 |  |
-| FullName | TYPE_STRING | 3 |  |
-| Initials | TYPE_STRING | 4 |  |
-| Username | TYPE_STRING | 5 |  |
-| WebhookURL | TYPE_STRING | 6 |  |
-
-### Services
-
-#### Users
-
-Users stores user information. It assumes all requests are authenticated.
-
-| Method Name | Request Type | Response Type | Description|
-| ---- | ---- | ------------ | -----------|
-| CreateUser | User | User | Create takes information about a user and creates an entry
- It returns that User with it's ID populated |
-| ReadUser | User | User | ReadUser takes some information about a user and tries to find the
- user with that information
- Accepted values: ID, Info.Username, Info.email, and Trello.ID |
-| UpdateUser | User | User | UpdateUser requires an ID, which can be obttained from ReadUser.
- All other non-zerp values will be updated |
-| DeleteUser | User | User | DeleteUser requires an ID, as a Read before a delete is a good idea.
- It will return User with just thre requested ID on success |
-
-#### Users - Http Methods
-

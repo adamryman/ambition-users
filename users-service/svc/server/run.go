@@ -1,12 +1,9 @@
-package main
+package server
 
 import (
-	"flag"
-	"fmt"
 	"net"
 	"net/http"
 	"net/http/pprof"
-	"os"
 
 	// 3d Party
 	"golang.org/x/net/context"
@@ -17,48 +14,29 @@ import (
 
 	// This Service
 	pb "github.com/adamryman/ambition-users/users-service"
-	svc "github.com/adamryman/ambition-users/users-service/generated"
-	handler "github.com/adamryman/ambition-users/users-service/handlers/server"
-	middlewares "github.com/adamryman/ambition-users/users-service/middlewares"
+	"github.com/adamryman/ambition-users/users-service/handlers"
+	"github.com/adamryman/ambition-users/users-service/middlewares"
+	"github.com/adamryman/ambition-users/users-service/svc"
 )
 
-func main() {
-	var (
-		debugAddr = flag.String("debug.addr", ":5060", "Debug and metrics listen address")
-		httpAddr  = flag.String("http.addr", ":5050", "HTTP listen address")
-		grpcAddr  = flag.String("grpc.addr", ":5040", "gRPC (HTTP) listen address")
-	)
-	flag.Parse()
+// Config contains the required fields for running a server
+type Config struct {
+	HTTPAddr  string
+	DebugAddr string
+	GRPCAddr  string
+}
 
-	// Use environment variables, if set. Flags have priority over Env vars.
-	if os.Getenv("DEBUG_ADDR") != "" && *debugAddr == ":5060" {
-		*debugAddr = os.Getenv("DEBUG_ADDR")
-	}
-	if os.Getenv("HTTP_ADDR") != "" && *httpAddr == ":5050" {
-		*httpAddr = os.Getenv("HTTP_ADDR")
-	}
-	if os.Getenv("GRPC_ADDR") != "" && *grpcAddr == ":5040" {
-		*grpcAddr = os.Getenv("GRPC_ADDR")
-	}
-	if os.Getenv("PORT") != "" && *httpAddr == ":5050" {
-		*httpAddr = fmt.Sprintf(":%s", os.Getenv("PORT"))
-	}
-
-	// Logging domain.
-	var logger log.Logger
-	{
-		logger = log.NewLogfmtLogger(os.Stdout)
-		logger = log.NewContext(logger).With("ts", log.DefaultTimestampUTC)
-		logger = log.NewContext(logger).With("caller", log.DefaultCaller)
-	}
+// Run starts a new http server, gRPC server, and a debug server with the
+// passed config and logger
+func Run(cfg Config, logger log.Logger) {
 	logger.Log("msg", "hello")
 	defer logger.Log("msg", "goodbye")
 
 	// Business domain.
 	var service pb.UsersServer
 	{
-		service = handler.NewService()
-		// Wrap Service with middlewares. See ../middlewares/service.go
+		service = handlers.NewService()
+		// Wrap Service with middlewares. See middlewares/service.go
 		service = middlewares.WrapService(service)
 	}
 
@@ -70,7 +48,6 @@ func main() {
 		deleteuserEndpoint = svc.MakeDeleteUserEndpoint(service)
 	)
 
-	// Wrap Endpoints with middlewares. See ../middlewares/endpoints.go
 	endpoints := svc.Endpoints{
 		CreateUserEndpoint: createuserEndpoint,
 		ReadUserEndpoint:   readuserEndpoint,
@@ -78,7 +55,7 @@ func main() {
 		DeleteUserEndpoint: deleteuserEndpoint,
 	}
 
-	// Wrap selected Endpoints with middlewares. See ../middlewares/endpoints.go
+	// Wrap selected Endpoints with middlewares. See middlewares/endpoints.go
 	endpoints = middlewares.WrapEndpoints(endpoints)
 
 	// Mechanical domain.
@@ -86,7 +63,7 @@ func main() {
 	ctx := context.Background()
 
 	// Interrupt handler.
-	go handler.InterruptHandler(errc)
+	go handlers.InterruptHandler(errc)
 
 	// Debug listener.
 	go func() {
@@ -99,23 +76,23 @@ func main() {
 		m.Handle("/debug/pprof/symbol", http.HandlerFunc(pprof.Symbol))
 		m.Handle("/debug/pprof/trace", http.HandlerFunc(pprof.Trace))
 
-		logger.Log("addr", *debugAddr)
-		errc <- http.ListenAndServe(*debugAddr, m)
+		logger.Log("addr", cfg.DebugAddr)
+		errc <- http.ListenAndServe(cfg.DebugAddr, m)
 	}()
 
 	// HTTP transport.
 	go func() {
 		logger := log.NewContext(logger).With("transport", "HTTP")
 		h := svc.MakeHTTPHandler(ctx, endpoints, logger)
-		logger.Log("addr", *httpAddr)
-		errc <- http.ListenAndServe(*httpAddr, h)
+		logger.Log("addr", cfg.HTTPAddr)
+		errc <- http.ListenAndServe(cfg.HTTPAddr, h)
 	}()
 
 	// gRPC transport.
 	go func() {
 		logger := log.NewContext(logger).With("transport", "gRPC")
 
-		ln, err := net.Listen("tcp", *grpcAddr)
+		ln, err := net.Listen("tcp", cfg.GRPCAddr)
 		if err != nil {
 			errc <- err
 			return
@@ -125,7 +102,7 @@ func main() {
 		s := grpc.NewServer()
 		pb.RegisterUsersServer(s, srv)
 
-		logger.Log("addr", *grpcAddr)
+		logger.Log("addr", cfg.GRPCAddr)
 		errc <- s.Serve(ln)
 	}()
 

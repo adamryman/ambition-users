@@ -1,4 +1,4 @@
-package handler
+package handlers
 
 import (
 	"golang.org/x/net/context"
@@ -6,13 +6,13 @@ import (
 	"github.com/adamryman/kit/dbconn"
 	"github.com/pkg/errors"
 
-	"github.com/adamryman/ambition-users/mysql"
+	sql "github.com/adamryman/ambition-users/mysql"
 	pb "github.com/adamryman/ambition-users/users-service"
 )
 
 // NewService returns a naïve, stateless implementation of Service.
 func NewService() pb.UsersServer {
-	database, err := mysql.InitDatabase(dbconn.FromENV("MYSQL").MySQL())
+	database, err := sql.InitDatabase(dbconn.FromENV("MYSQL").MySQL())
 	if err != nil {
 		// TODO: Do not panic, start something to try connection over and over.
 		// Maybe 100 times?
@@ -26,7 +26,7 @@ func NewService() pb.UsersServer {
 }
 
 type usersService struct {
-	db pb.Database
+	db *sql.Database
 }
 
 // CreateUser implements Service.
