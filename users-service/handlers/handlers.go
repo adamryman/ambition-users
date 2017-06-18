@@ -2,17 +2,21 @@ package handlers
 
 import (
 	"golang.org/x/net/context"
-	"os"
+	//"os"
 
 	"github.com/pkg/errors"
 
-	sql "github.com/adamryman/ambition-users/sqlite"
+	//sql "github.com/adamryman/ambition-users/sqlite"
+	sql "github.com/adamryman/ambition-users/mysql"
 	pb "github.com/adamryman/ambition-users/users-service"
+	"github.com/adamryman/kit/dbconn"
 )
 
 // NewService returns a naïve, stateless implementation of Service.
 func NewService() pb.UsersServer {
-	database, err := sql.Open(os.Getenv("SQLITE3"))
+	//database, err := sql.Open(os.Getenv("SQLITE3"))
+
+	database, err := sql.Open(dbconn.FromENV("MYSQL").MySQL())
 	if err != nil {
 		// TODO: Do not panic, start something to try connection over and over.
 		// Maybe 100 times?

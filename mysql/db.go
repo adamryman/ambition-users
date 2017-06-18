@@ -13,13 +13,10 @@ type Database struct {
 	db *sql.DB
 }
 
-func InitDatabase(conn string) (*Database, error) {
+func Open(conn string) (*Database, error) {
 	d, err := sql.Open("mysql", conn)
 	if err != nil {
 		return nil, errors.Wrapf(err, "cannot connect to %s", conn)
-	}
-	if err := d.Ping(); err != nil {
-		return nil, err
 	}
 	return &Database{d}, nil
 }
